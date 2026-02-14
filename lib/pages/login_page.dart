@@ -1,5 +1,5 @@
-// Import flutter's material design library
 import 'package:flutter/material.dart';
+import 'register_page.dart'; // <--- THIS LINE IS THE FIX
 import 'home_page.dart';
 
 class LoginPage  extends StatelessWidget {
@@ -95,6 +95,33 @@ class LoginPage  extends StatelessWidget {
 
                 child: Text('Login'),
               ),
+              // --- NEW ACCOUNT CREATION LINK START ---
+              SizedBox(height: 15),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                  );
+                },
+                child: RichText(
+                  text: TextSpan(
+                    text: "Don't have an account? ",
+                    style: TextStyle(color: Colors.white),
+                    children: [
+                      TextSpan(
+                        text: "Register",
+                        style: TextStyle(
+                          color: Colors.yellow,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // --- NEW ACCOUNT CREATION LINK END ---
             ],
           ),
         ),
