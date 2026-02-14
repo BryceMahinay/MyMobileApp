@@ -6,12 +6,13 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _formKey = GlobalKey<FormState>(); // Required for validation
+  final _formKey = GlobalKey<FormState>();
   final _passController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Gradient background remains, but the form items will be solid
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -19,60 +20,54 @@ class _RegisterPageState extends State<RegisterPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.indigo, Colors.lightBlueAccent],
+            colors: [Colors.indigo[900]!, Colors.indigo[600]!],
           ),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.symmetric(horizontal: 30),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(height: 50),
-                Icon(Icons.person_add, size: 80, color: Colors.white),
+                SizedBox(height: 80),
+                // Simple Header
+                Icon(Icons.person_add_alt_1_rounded, size: 70, color: Colors.white),
+                SizedBox(height: 10),
                 Text(
                   "Create Account",
-                  style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 28, color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1),
                 ),
+                SizedBox(height: 40),
+
+                // Solid White Input Fields
+                _buildSolidField("First Name", Icons.person_outline, (v) => v!.isEmpty ? "Required" : null),
+                _buildSolidField("Last Name", Icons.person_outline, (v) => v!.isEmpty ? "Required" : null),
+                _buildSolidField("Contact Number", Icons.phone_android,
+                        (v) => (v!.length < 10 || v.length > 15) ? "10-15 digits required" : null,
+                    keyboardType: TextInputType.phone),
+                _buildSolidField("Username", Icons.alternate_email, (v) => v!.length < 4 ? "Min 4 characters" : null),
+                _buildSolidField("Password", Icons.lock_outline, (v) => v!.length < 6 ? "Min 6 characters" : null,
+                    obscure: true, controller: _passController),
+                _buildSolidField("Confirm Password", Icons.lock_reset, (v) => v != _passController.text ? "Passwords don't match" : null,
+                    obscure: true),
+
                 SizedBox(height: 30),
 
-                // Validations based on your requirements
-                _buildField("First Name", (v) => v!.isEmpty ? "Cannot be empty" : null),
-                _buildField("Last Name", (v) => v!.isEmpty ? "Cannot be empty" : null),
-                _buildField(
-                    "Contact Number",
-                        (v) => (v!.length < 10 || v.length > 15) ? "Must be 10-15 digits" : null,
-                    keyboardType: TextInputType.phone
-                ),
-                _buildField("Username", (v) => v!.length < 4 ? "Minimum 4 characters" : null),
-                _buildField(
-                    "Password",
-                        (v) => v!.length < 6 ? "Minimum 6 characters" : null,
-                    obscure: true,
-                    controller: _passController
-                ),
-                _buildField(
-                    "Confirm Password",
-                        (v) => v != _passController.text ? "Must match Password" : null,
-                    obscure: true
-                ),
-
-                SizedBox(height: 20),
+                // Solid Primary Button
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigo[900],
-                    minimumSize: Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.indigo[900],
+                    minimumSize: Size(double.infinity, 55),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Logic for successful registration
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Account Created Successfully!")),
-                      );
+                      // Handle signup
                     }
                   },
-                  child: Text("Sign Up", style: TextStyle(color: Colors.white)),
+                  child: Text("SIGN UP", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 ),
 
                 TextButton(
@@ -82,6 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: TextStyle(color: Colors.white, decoration: TextDecoration.underline),
                   ),
                 ),
+                SizedBox(height: 40),
               ],
             ),
           ),
@@ -90,25 +86,32 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  // Helper method to create consistent TextFields without errors
-  Widget _buildField(String hint, String? Function(String?) validator,
+  // Helper for Solid Material Inputs
+  Widget _buildSolidField(String hint, IconData icon, String? Function(String?) validator,
       {bool obscure = false, TextEditingController? controller, TextInputType? keyboardType}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15.0),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscure,
-        keyboardType: keyboardType,
-        validator: validator,
-        decoration: InputDecoration(
-          hintText: hint,
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
+      padding: const EdgeInsets.only(bottom: 18.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white, // Solid color instead of transparent
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3)),
+          ],
+        ),
+        child: TextFormField(
+          controller: controller,
+          obscureText: obscure,
+          keyboardType: keyboardType,
+          validator: validator,
+          style: TextStyle(color: Colors.black87),
+          decoration: InputDecoration(
+            hintText: hint,
+            prefixIcon: Icon(icon, color: Colors.indigo[400]),
+            border: InputBorder.none, // Hide the default underline
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+            errorStyle: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         ),
       ),
     );
